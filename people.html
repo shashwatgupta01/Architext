@@ -1,0 +1,95 @@
+<link rel="stylesheet" href="public/main.css" />
+
+<header>
+    <h1>Architecture Insights</h1>
+    <p>Exploring the beauty and functionality of architectural design</p>
+  </header>
+<nav>
+    <div>
+        <a href="blog.html">Blog</a>
+        <a href="videos.html">Videos</a>
+        <a href="people.html">People</a>
+        <a href="profileview.html">View Profile</a>
+        <a href="profile.html">Edit Profile</a>
+        <a href="chat.html">Chat</a>
+    </div>
+    <div>
+        <a href="login.html">Log Out</a>
+    </div>
+</nav>
+
+<div class="people-container">
+    <h1>Other Users</h1>
+    <div id="people-list"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch(`/all-users?currentUser=${encodeURIComponent(localStorage.getItem('currentUser'))}`)
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to fetch users');
+                return response.json();
+            })
+            .then(users => {
+                const peopleList = document.getElementById('people-list');
+                users.forEach(user => {
+                    const userCard = document.createElement('div');
+                    userCard.className = 'user-card';
+                    const profilePic = user.profile_pic || '';
+                    const profilePicStyle = profilePic ? `background-image: url('${profilePic}')` : 'background-color: #ccc';
+                    userCard.innerHTML = `
+                        <div class="user-info">
+                            <div class="user-profile-pic" style="${profilePicStyle}"></div>
+                            <p><strong>Username:</strong> ${user.username}</p>
+                            <p><strong>Name:</strong> ${user.name || 'N/A'}</p>
+                            <p><strong>Followers:</strong> ${user.followers}</p>
+                            <p><strong>Following:</strong> ${user.following}</p>
+                            <button class="view-profile-button" data-username="${user.username}">View Profile</button>
+                        </div>
+                    `;
+                    peopleList.appendChild(userCard);
+                });
+
+                // Add event listeners to all view profile buttons
+                document.querySelectorAll('.view-profile-button').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const username = event.target.getAttribute('data-username');
+                        window.location.href = `profileview.html?username=${username}`;
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching users:', error);
+                alert('Failed to load users.');
+            });
+    });
+</script>
+
+<style>
+    .people-container {
+        padding: 20px;
+    }
+
+    .user-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        margin: 10px 0;
+        background-color: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info p {
+        margin: 5px 0;
+    }
+
+    .user-profile-pic {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #ccc;
+        background-size: cover;
+        background-position: center;
+        margin-bottom: 10px;
+    }
+</style>

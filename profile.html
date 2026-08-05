@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="public/main.css" />
+</head>
+
+<body>
+
+  <header>
+    <h1>Edit Your Profile</h1>
+    <p>Update your information and preferences</p>
+  </header>
+
+  <nav>
+    <div>
+      <a href="blog.html">Blog</a>
+      <a href="videos.html">Videos</a>
+      <a href="people.html">People</a>
+      <a href="profileview.html">View Profile</a>
+      <a href="profile.html">Edit Profile</a>
+      <a href="chat.html">Chat</a>
+    </div>
+    <div>
+      <a href="login.html">Log Out</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>Edit Profile</h2>
+    <form id="updateProfileForm" action="/update-profile" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="profile-picture">Profile Picture URL</label>
+        <input type="text" id="profilePicInput" name="profile_picture" placeholder="Enter image URL" />
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required disabled />
+      </div>
+
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" />
+      </div>
+
+      <div class="form-group">
+        <label for="password">New Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter a new password" />
+      </div>
+
+      <button type="submit" class="save-changes-button">
+        <i class="fa-solid fa-user-check"></i> Save Changes
+      </button>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const username = localStorage.getItem('currentUser');
+      if (!username) {
+        alert('You must be logged in to view your profile.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      fetch(`/profile/${username}`)
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch profile data');
+          return response.json();
+        })
+        .then(profile => {
+          document.getElementById('username').value = profile.username || '';
+          document.getElementById('name').value = profile.name || '';
+          document.getElementById('email').value = profile.email || '';
+          document.getElementById('profilePicInput').value = profile.profile_pic || '';
+        });
+
+      document.getElementById('updateProfileForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const profilePic = document.getElementById('profilePicInput').value.trim();
+
+        try {
+          const response = await fetch('/edit-profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              username,
+              name: name || null,
+              email: email || null,
+              profile_pic: profilePic || null
+            })
+          });
+
+          if (!response.ok) throw new Error('Failed to update profile');
+
+          const data = await response.json();
+          alert(data.message || 'Profile updated successfully!');
+          window.location.href = 'blog.html';
+        } catch (error) {
+          alert('Error updating profile. Please try again later.');
+        }
+      });
+    });
+  </script>
+
+  <style>
+    .save-changes-button {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #444;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .save-changes-button:hover {
+      background: #666;
+      transform: translateY(-2px);
+    }
+  </style>
+
+</body>
+</html>

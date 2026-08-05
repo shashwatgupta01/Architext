@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architext Login</title>
+
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-pO1j6OV3vix8+K2/afV3E39KcRrxvjglRRnS2Qy+6M8xQZG1RI9OUKttFWsBi1JYdX9zfgT9Y1SvRvK+PluN1w=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    /* reset */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background: #000; /* fallback if images fail */
+    }
+
+    /* full-screen background image */
+    #bg-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6);
+    }
+
+    /* card */
+    .login-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 320px;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      color: #222;
+      z-index: 1;
+    }
+    .login-card .logo {
+      font-size: 48px;
+      margin-bottom: 0.5rem;
+    }
+    .login-card h2 {
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    /* fields */
+    .input-group {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .input-group i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #888;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 40px;
+      border: none;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 1rem;
+      color: #222;
+    }
+    .input-group input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #444;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background: #666;
+      transform: translateY(-2px);
+    }
+
+    .error {
+      color: #c00;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .welcome h3 {
+      color: #080;
+      margin-bottom: 0.5rem;
+    }
+    .toggle-link {
+      margin: 0.75rem 0;
+      font-size: 0.9rem;
+    }
+    .toggle-link a {
+      color: #444;
+      text-decoration: none;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <img
+    id="bg-img"
+    src="https://upload.wikimedia.org/wikipedia/commons/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg"
+    alt="background"
+  />
+
+  <div class="login-card">
+    <div class="logo"><i class="fa-solid fa-monument"></i></div>
+    <h2>Welcome to Architext</h2>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <i class="fa-solid fa-user"></i>
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          required
+        />
+      </div>
+      <div class="input-group">
+        <i class="fa-solid fa-lock"></i>
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
+      </div>
+      <button type="submit">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i> Log In
+      </button>
+      <p id="errorMsg" class="error" hidden>Invalid credentials</p>
+    </form>
+    <p id="toggleToRegister" class="toggle-link">
+      Don't have an account?
+      <a href="#" id="showRegisterLink">Create Account</a>
+    </p>
+
+    <form id="registerForm" hidden>
+      <div class="input-group">
+        <i class="fa-solid fa-user"></i>
+        <input
+          type="text"
+          name="regUsername"
+          placeholder="Username"
+          required
+        />
+      </div>
+      <div class="input-group">
+        <i class="fa-solid fa-lock"></i>
+        <input
+          type="password"
+          name="regPassword"
+          placeholder="Password"
+          required
+        />
+      </div>
+      <div class="input-group">
+        <i class="fa-solid fa-lock"></i>
+        <input
+          type="password"
+          name="regConfirm"
+          placeholder="Confirm Password"
+          required
+        />
+      </div>
+      <button type="submit">
+        <i class="fa-solid fa-user-plus"></i> Register
+      </button>
+      <p id="registerError" class="error" hidden></p>
+      <p id="registerSuccess" class="welcome" hidden>
+        ✅ Account created! You can now log in.
+      </p>
+    </form>
+    <p id="toggleToLogin" class="toggle-link" hidden>
+      Already have an account?
+      <a href="#" id="showLoginLink">Log In</a>
+    </p>
+  </div>
+
+  <script>
+    const images = [
+      'https://upload.wikimedia.org/wikipedia/commons/a/a8/Tour_Eiffel_Wikimedia_Commons.jpg'
+    ];
+    let idx = 0;
+    const bg = document.getElementById('bg-img');
+    setInterval(() => {
+      idx = (idx + 1) % images.length;
+      bg.src = images[idx];
+    }, 6000);
+
+    const loginForm        = document.getElementById('loginForm');
+    const registerForm     = document.getElementById('registerForm');
+    const err              = document.getElementById('errorMsg');
+    const registerErr      = document.getElementById('registerError');
+    const registerSuccess  = document.getElementById('registerSuccess');
+    const welcomeMsg       = document.getElementById('welcomeMsg');
+    const userSpan         = document.getElementById('userSpan');
+    const toggleToRegister = document.getElementById('toggleToRegister');
+    const toggleToLogin    = document.getElementById('toggleToLogin');
+    const showRegisterLink = document.getElementById('showRegisterLink');
+    const showLoginLink    = document.getElementById('showLoginLink');
+    
+    function showWelcome(username) {
+      loginForm.hidden        = true;
+      registerForm.hidden     = true;
+      toggleToRegister.hidden = true;
+      toggleToLogin.hidden    = true;
+      err.hidden              = true;
+      registerErr.hidden      = true;
+      registerSuccess.hidden  = true;
+
+      userDisplay.textContent = username;
+      welcomePage.hidden      = false;
+      blogPage.hidden         = false;
+    }
+
+    showRegisterLink.addEventListener('click', e => {
+      e.preventDefault();
+      loginForm.hidden        = true;
+      toggleToRegister.hidden = true;
+      registerForm.hidden     = false;
+      toggleToLogin.hidden    = false;
+      err.hidden              = true;
+      registerErr.hidden      = true;
+      registerSuccess.hidden  = true;
+    });
+
+    showLoginLink.addEventListener('click', e => {
+      e.preventDefault();
+      registerForm.hidden     = true;
+      toggleToLogin.hidden    = true;
+      loginForm.hidden        = false;
+      toggleToRegister.hidden = false;
+      registerErr.hidden      = true;
+      registerSuccess.hidden  = true;
+    });
+
+    registerForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const u = registerForm.regUsername.value.trim();
+      const p = registerForm.regPassword.value;
+      const c = registerForm.regConfirm.value;
+
+      if (!u || !p) {
+        registerErr.textContent = 'Please fill all fields';
+        registerErr.hidden      = false;
+        return;
+      }
+      if (p !== c) {
+        registerErr.textContent = 'Passwords do not match';
+        registerErr.hidden      = false;
+        return;
+      }
+
+      fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      })
+      .then(res => {
+        if (res.status === 201) {
+          registerSuccess.hidden = false;
+          registerErr.hidden = true;
+        } else {
+          return res.json().then(data => {
+            registerErr.textContent = data.message || 'Registration failed';
+            registerErr.hidden = false;
+          });
+        }
+      })
+      .catch(err => {
+        registerErr.textContent = 'Server error';
+        registerErr.hidden = false;
+      });
+
+      registerErr.hidden = true;
+      registerSuccess.hidden = false;
+    });
+
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const u = loginForm.username.value.trim();
+      const p = loginForm.password.value;
+
+      fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: u, password: p })
+      })
+      .then(res => {
+        if (res.status === 200) {
+          return res.json().then(data => {
+            localStorage.setItem('currentUser', data.user.username);
+            window.location.href = 'blog.html';
+          });
+        } else {
+          return res.json().then(data => {
+            err.textContent = data.message || 'Login failed';
+            err.hidden = false;
+          });
+        }
+      })
+      .catch(() => {
+        err.textContent = 'Server error';
+        err.hidden = false;
+      });
+    });
+  </script>
+</body>
+</html>
